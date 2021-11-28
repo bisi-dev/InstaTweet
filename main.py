@@ -75,7 +75,21 @@ def generate():
         )
 
     except:
-        return render_template("raw.html")
+        image = base64.b64encode(
+            requests.get(
+                "https://miro.medium.com/max/800/1*hFwwQAW45673VGKrMPE2qQ.png"
+            ).content
+        )
+        image = image.decode("utf-8")
+        image = "data:image/jpeg;base64," + image
+        return render_template(
+            "index.html",
+            profile_html=f"Invalid Link!!!",
+            caption_html=f"Invalid Link!!!",
+            image=f"{image}",
+            date_html=f"Invalid Link!!!",
+            ecaption_html=f"Invalid Link!!!",
+        )
 
 
 # Test to Ping Application
