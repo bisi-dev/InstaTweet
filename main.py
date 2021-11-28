@@ -32,6 +32,7 @@ def index():
         caption_html=f"Post Caption",
         image=f"{image}",
         date_html=f"DATE",
+        ecaption_html=f"Edit Caption...",
     )
 
 
@@ -70,6 +71,7 @@ def generate():
             caption_html=f"{post.caption}",
             image=f"{image}",
             date_html=f"{post.date}",
+            ecaption_html=f"{post.caption}",
         )
 
     except:
