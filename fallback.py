@@ -2,19 +2,13 @@ from flask import Flask
 from flask import request
 import flask
 import tweepy
-from dotenv import load_dotenv
-import os
 
 app = Flask(__name__)
 
 # config
 
-load_dotenv()
-client = os.getenv("CONSUMER_TOKEN")
-secret = os.getenv("CONSUMER_SECRET")
-
-CONSUMER_TOKEN = client
-CONSUMER_SECRET = secret
+CONSUMER_TOKEN = ""
+CONSUMER_SECRET = ""
 CALLBACK_URL = "https://instatweetbot.herokuapp.com/verify"
 session = dict()
 db = dict()  # you can save these values to a database
@@ -28,12 +22,11 @@ def send_token():
         # get the request tokens
         redirect_url = auth.get_authorization_url()
         print(auth.request_token)
-        session["request_token"] = auth.request_token["oauth_token"]
+        session["request_token"] = auth.request_token
         # session["request_token"] = (
-        #     auth.request_token["oauth_token"],
-        #     # auth.request_token["oauth_token_secret"],
+        #     auth.request_token.oauth_token,
+        #     auth.request_token.oauth_token_secret,
         # )
-        # print(session)
     except tweepy.TweepyException:
         print("Error! Failed to get request token")
 
@@ -51,9 +44,7 @@ def get_verification():
     token = session["request_token"]
     del session["request_token"]
 
-    auth.request_token = {"oauth_token": token, "oauth_token_secret": verifier}
-
-    # auth.set_request_token(token[0], token[1])
+    auth.set_request_token(token[0], token[1])
 
     try:
         auth.get_access_token(verifier)
@@ -65,8 +56,8 @@ def get_verification():
 
     # store in a db
     db["api"] = api
-    db["access_token_key"] = auth.access_token
-    db["access_token_secret"] = auth.access_token_secret
+    db["access_token_key"] = auth.access_token.key
+    db["access_token_secret"] = auth.access_token.secret
     return flask.redirect(flask.url_for("start"))
 
 
