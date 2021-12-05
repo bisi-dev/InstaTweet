@@ -1,5 +1,5 @@
 # import modules
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 import flask
 from urllib.parse import urlparse, urlsplit
 import re
@@ -13,15 +13,15 @@ import tweepy
 # initialise flask app
 app = Flask(__name__)
 
-# initialise environment variables - instagram credentials
+# initialise environment variables
 load_dotenv()
 client = os.getenv("USERNAME")
 secret = os.getenv("PASSWORD")
 twitter_client = os.getenv("CONSUMER_TOKEN")
 twitter_secret = os.getenv("CONSUMER_SECRET")
 CALLBACK_URL = "https://instatweetbot.herokuapp.com/verify"
-session = dict()
-db = dict()
+
+app.config.update(SECRET_KEY=twitter_secret)
 
 # Index WebPage - Main Page for Onboarding
 @app.route("/")
@@ -106,13 +106,8 @@ def send_token():
     try:
         # get the request tokens
         redirect_url = auth.get_authorization_url()
-        print(auth.request_token)
         session["request_token"] = auth.request_token["oauth_token"]
-        # session["request_token"] = (
-        #     auth.request_token["oauth_token"],
-        #     # auth.request_token["oauth_token_secret"],
-        # )
-        # print(session)
+
     except tweepy.TweepyException:
         print("Error! Failed to get request token")
 
@@ -125,37 +120,34 @@ def get_verification():
 
     # get the verifier key from the request url
     verifier = request.args["oauth_verifier"]
-
-    auth = tweepy.OAuthHandler(twitter_client, twitter_secret)
     token = session["request_token"]
     del session["request_token"]
 
+    auth = tweepy.OAuthHandler(twitter_client, twitter_secret)
     auth.request_token = {"oauth_token": token, "oauth_token_secret": verifier}
-
-    # auth.set_request_token(token[0], token[1])
 
     try:
         auth.get_access_token(verifier)
     except tweepy.TweepyException:
         print("Error! Failed to get access token.")
 
-    # now you have access!
-    api = tweepy.API(auth)
+    session["token"] = (auth.access_token, auth.access_token_secret)
 
-    # store in a db
-    db["api"] = api
-    db["access_token_key"] = auth.access_token
-    db["access_token_secret"] = auth.access_token_secret
-    return flask.redirect(flask.url_for("complete"))
+    return redirect("/complete")
 
 
 @app.route("/complete")
 def complete():
-    # auth done, app logic can begin
-    api = db["api"]
+    # rebuild auth
+    token, token_secret = session["token"]
+    auth = tweepy.OAuthHandler(twitter_client, twitter_secret)
+    auth.set_access_token(token, token_secret)
+
+    # now you have access!
+    api = tweepy.API(auth)
 
     # example, print your latest status posts
-    return render_template("tweet.html", tweets=api.user_timeline())
+    return flask.render_template("tweet.html", tweets=api.user_timeline())
 
 
 # Test to Ping Application
@@ -165,5 +157,5 @@ def test():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="127.0.0.1", port="5000")
-    # app.run(debug=True)
+    # app.run(debug=True, host="127.0.0.1", port="5000")
+    app.run(debug=True)
