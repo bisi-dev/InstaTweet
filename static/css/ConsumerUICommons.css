@@ -1,3 +1,30 @@
+.box{
+    width: 614px;   
+}
+
+.cube{
+    transform: translateX(614px);  
+}
+
+.dice{
+    transform: translateX(1227px); 
+    width: 1px;  
+}
+
+@media screen and (max-width: 768px) {
+    .box{
+        width: 100vw;
+    }
+
+    .cube{
+        transform: translateX(100vw);  
+    }
+
+    .dice{
+        transform: translateX(calc(2 * 100vw)); 
+        width: 1px;  
+    }
+}
 .ZUqME {
     -webkit-box-sizing: border-box;
     box-sizing: border-box

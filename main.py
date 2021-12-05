@@ -1,6 +1,5 @@
 # import modules
-from flask import Flask, render_template, request, redirect, url_for, session
-import flask
+from flask import Flask, render_template, request, redirect, session
 from urllib.parse import urlparse, urlsplit
 import re
 from instaloader import *
@@ -26,20 +25,40 @@ app.config.update(SECRET_KEY=twitter_secret)
 # Index WebPage - Main Page for Onboarding
 @app.route("/")
 def index():
-    image = base64.b64encode(
-        requests.get(
-            "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png"
-        ).content
-    )
+    with open("./static/img/waiting.jpg", "rb") as image_file:
+        image = base64.b64encode(image_file.read())
     image = image.decode("utf-8")
     image = "data:image/jpeg;base64," + image
     return render_template(
         "index.html",
-        profile_html=f"Post Profile",
+        profile_html=f"InstaTweet",
         caption_html=f"Post Caption",
         image=f"{image}",
         date_html=f"DATE",
         ecaption_html=f"Edit Caption...",
+    )
+
+
+def complete():
+    # # rebuild auth
+    # token, token_secret = session["token"]
+    # auth = tweepy.OAuthHandler(twitter_client, twitter_secret)
+    # auth.set_access_token(token, token_secret)
+
+    # # now you have access!
+    # api = tweepy.API(auth)
+
+    with open("./static/img/success.jpg", "rb") as image_file:
+        image = base64.b64encode(image_file.read())
+    image = image.decode("utf-8")
+    image = "data:image/jpeg;base64," + image
+    return render_template(
+        "index.html",
+        profile_html=f"InstaTweet",
+        caption_html=f"Success",
+        image=f"{image}",
+        date_html=f"DATE",
+        ecaption_html=f"Success!!!",
     )
 
 
@@ -82,16 +101,13 @@ def generate():
         )
 
     except:
-        image = base64.b64encode(
-            requests.get(
-                "https://miro.medium.com/max/800/1*hFwwQAW45673VGKrMPE2qQ.png"
-            ).content
-        )
+        with open("./static/img/error.png", "rb") as image_file:
+            image = base64.b64encode(image_file.read())
         image = image.decode("utf-8")
         image = "data:image/jpeg;base64," + image
         return render_template(
             "index.html",
-            profile_html=f"Invalid Link!!!",
+            profile_html=f"Instatweet",
             caption_html=f"Invalid Link!!!",
             image=f"{image}",
             date_html=f"Invalid Link!!!",
@@ -112,7 +128,7 @@ def send_token():
         print("Error! Failed to get request token")
 
     # this is twitter's url for authentication
-    return flask.redirect(redirect_url)
+    return redirect(redirect_url)
 
 
 @app.route("/verify")
@@ -133,21 +149,7 @@ def get_verification():
 
     session["token"] = (auth.access_token, auth.access_token_secret)
 
-    return redirect("/complete")
-
-
-@app.route("/complete")
-def complete():
-    # rebuild auth
-    token, token_secret = session["token"]
-    auth = tweepy.OAuthHandler(twitter_client, twitter_secret)
-    auth.set_access_token(token, token_secret)
-
-    # now you have access!
-    api = tweepy.API(auth)
-
-    # example, print your latest status posts
-    return flask.render_template("tweet.html", tweets=api.user_timeline())
+    return redirect("/complete", complete)
 
 
 # Test to Ping Application
@@ -157,5 +159,5 @@ def test():
 
 
 if __name__ == "__main__":
-    # app.run(debug=True, host="127.0.0.1", port="5000")
-    app.run(debug=True)
+    app.run(debug=True, host="127.0.0.1", port="5010")
+    # app.run(debug=True)
