@@ -6,7 +6,7 @@
 
 InstaTweet is a web app built with Python/Flask that enables users to create tweets directly from Instagram posts.
 
-<a href="https://bisi.dev/" target="_blank"><strong>>> LIVE WEB APP</strong></a>
+<a href="https://instatweetbot.herokuapp.com/" target="_blank"><strong>>> LIVE WEB APP</strong></a>
 
 · <a href="#how-to-start">How to Start</a>· <a href="#feedback">Feedback</a>· <a href="#license">License</a>
 
@@ -16,9 +16,11 @@ InstaTweet is a web app built with Python/Flask that enables users to create twe
 
 ## How to Start
 
-After Forking/Cloning, you can get up and running in just a few minutes.
+Pre-Requisites: Python 3.0+
 
-1. **Install all Packages.**
+After Forking/Cloning, you can get up and running in just a few minutes. From the project's root folder:
+
+1. **Install all required packages.**
 
    ```
    pip install requirements.txt
