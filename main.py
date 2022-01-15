@@ -1,6 +1,6 @@
 # import modules
 from flask import Flask, render_template, request, redirect, session
-from urllib.parse import urlparse, urlsplit
+from urllib.parse import urlsplit
 import re
 from instaloader import *
 from dotenv import load_dotenv
@@ -78,13 +78,11 @@ def generate():
         L = instaloader.Instaloader()
 
         try:
-            L.load_session_from_file(
-                "_professir_", "./static/session-_professir_"
-            )
+            L.load_session_from_file(client, "./static/session")
 
         except:
             L.login(client, secret)
-            L.save_session_to_file("./static/session-_professir_")
+            L.save_session_to_file("./static/session")
 
         post = Post.from_shortcode(L.context, shortcode)
         image = base64.b64encode(requests.get(post.url).content)
