@@ -6,7 +6,9 @@
 
 InstaTweet is a web app built with Python/Flask that enables users to create tweets directly from Instagram posts.
 
-<a href="https://instatweetbot.herokuapp.com/" target="_blank"><strong>>> LIVE WEB APP</strong></a>
+<a href="https://instatweetbot.herokuapp.com/" target="_blank"><strong>>> LIVE WEB APP: HEROKU</strong></a>
+<br>
+<a href="https://instatweet.eu-gb.mybluemix.net/" target="_blank"><strong>>> LIVE WEB APP: IBM CLOUD</strong></a>
 
 · <a href="#how-to-start">How to Start</a>· <a href="#feedback">Feedback</a>· <a href="#license">License</a>
 
